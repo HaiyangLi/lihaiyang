@@ -1,0 +1,75 @@
+@(list: List[Weibo],page:Integer,pagesize:Integer)
+<script src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/weibo.js")" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")"/> 
+<ul id="showDate">
+@if(list.isEmpty()){
+   暂无动态，请稍后再试....
+}else{
+	<input type="checkbox" name="checkbox" value="checkbox" onclick="checkAll(this);">全选
+	<input type="button" name="bulkDelete" value="删除" onclick="bulkDelete()"><br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	@for(l <- list) {
+		<tr>
+			<input type="hidden" id="weiboid" value="@l.id"></input>
+			<td style="width:3%">
+				<input type="checkbox" name="subCheck" class="subCheck" value="@l.id">
+			</td>
+			<td style="width:10%">@l.username</td>
+			<td style="width:70%"><textarea id="@l.id" style="width:99%" disabled>@l.text</textarea></td>
+			<td style="width:17%">
+				<input type="button" name="edit" id="edit" value="编辑" onclick="edit(@l.id)">
+				<input type="button" name="save" id="save" value="保存" onclick="save(@l.id)">
+				<input type="button" name="del" id="del" value="删除" onclick="del(@l.id)">
+			</td>
+		</tr>
+	}
+	</table>
+	<form id="saveWeibo" method="POST" action="/postForm">
+		<input type="hidden" id="id" name="id" value=""></input>
+		<input type="hidden" id="text" name="text" value=""></input>
+	</form>
+}
+</ul>
+<style type="text/css">
+.paging{display:block;margin:0 550px;}
+</style>
+<input type="hidden" id="pagenum" name="pagenum" value=""></input>
+<div class="paging">
+<ul class="pagination">
+	<li><a href="@routes.Application.index(page-1)">&laquo;Previous</a></li>
+	<li><a href="@routes.Application.index(page+1)">&raquo;Next</a></li>
+</ul>
+</div>
+<script type="text/javascript">
+	function del(id){
+		if (!confirm("是否删除？")==1){
+			return;
+		}
+		$.post(@routes.WeiboController.del("")+id,function(data){
+			window.location.reload();
+		});
+	}
+	function bulkDelete(){
+		var boxLength = $("input[name='subCheck']:checked").length;
+		var chenked=$("input[name='subCheck']:checked").val([]); 
+		var names = "";
+		if(boxLength==0){
+		   	alert("请选择删除项！");
+		 	return;
+		}else{
+			for(var i=0;i<chenked.length;i++){
+				if(i<chenked.length-1){ 
+					names += chenked[i].value +","; 
+				}else if(i==chenked.length-1 || chenked.length==1){ 
+					names += chenked[i].value; 
+				}
+			} 
+			$.post(@routes.WeiboController.del("")+names,function(data){
+				window.location.reload();
+			});
+		}
+	}
+</script>
+

@@ -1,0 +1,7 @@
+<script src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")" type="text/javascript"></script>
+<input type="button" id="loginbtn" value="使用新浪微博帐号登录" onclick="javascript:getWeibo();"></input>
+<script type="text/javascript">
+	function getWeibo(){
+		window.location.assign("https://api.weibo.com/oauth2/authorize?client_id=3856530859&response_type=code&redirect_uri=127.0.0.1:9000");
+	}
+</script>
